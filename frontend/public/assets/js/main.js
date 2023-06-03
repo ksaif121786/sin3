@@ -1,6 +1,11 @@
 
 (function ($) {
     'use strict';
+
+
+
+
+
     const $inp = $(".ap-otp-input");
     $inp.on({
         paste(ev) { // Handle Pasting

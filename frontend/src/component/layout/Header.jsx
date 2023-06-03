@@ -1,7 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import axios from '../axios/axios';
+
 export default function Header() {
+
+    const token = localStorage.getItem('token');
+    const [name, setname] = useState("");
+
+    useEffect(() => {
+        getprofile();
+    }, [])
+
+    const getprofile = async () => {
+        try {
+            var config = {
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Accept': 'application/jsons' }
+            }
+            var result = await axios.post('/get-profile', {}, config);
+            if (result.data.status == true) {
+                setname(result.data.data.profile.name)
+            } else {
+                console.log('err', result.data.message)
+            }
+        } catch (err) {
+            console.log('err', err)
+        }
+    }
+
     return (
         <>
             {/* header start */}
@@ -20,22 +46,37 @@ export default function Header() {
                             <div className="col-lg-9 col-md-8 col-12 col-sm-8">
                                 <div className="header-middle-right f-right">
                                     <div className="header-login">
-                                        <a href="#">
+                                        <Link to="/account">
                                             <div className="header-icon-style">
                                                 <i className="icon-user icons" />
                                             </div>
-                                        </a>
-                                        <div className="login-text-content">
-                                            <a href="#"></a>
-                                            <p>
-                                                <a href="#" />
-                                                <a href="setup_profile.php">Register </a>
-                                                <br /> or{" "}
-                                                <Link to="login">
-                                                    <span style={{ marginTop: 0 }}>Sign in</span>
-                                                </Link>
-                                            </p>
-                                        </div>
+                                        </Link>
+                                        {
+                                            token ?
+                                                <div className="login-text-content">
+                                                    <Link to="/account"></Link>
+                                                    <p>
+                                                        <a href="#" />
+                                                        {/* <Link to="/account"></Link> */}
+                                                        <br /> {" "}
+                                                        <Link to="/account">
+                                                            <span style={{ marginTop: 0 }}>{name}</span>
+                                                        </Link>
+                                                    </p>
+                                                </div> :
+                                                <div className="login-text-content">
+                                                    <a href="#"></a>
+                                                    <p>
+                                                        <a href="#" />
+                                                        <Link to="/login">Register </Link>
+                                                        <br /> or{" "}
+                                                        <Link to="/login">
+                                                            <span style={{ marginTop: 0 }}>Sign in</span>
+                                                        </Link>
+                                                    </p>
+                                                </div>
+                                        }
+
                                     </div>
                                     <div className="header-wishlist">
                                         {/*<a href="wishlist.php">*/}
@@ -105,7 +146,7 @@ export default function Header() {
                                 <a href="#"></a>
                                 <p>
                                     <a href="#" />
-                                    <a href="setup_profile.php">Register </a>
+                                    <Link to="/login">Register </Link>
                                     <br /> or{" "}
                                     <Link to="/login">
                                         <span style={{ marginTop: 0 }}>Sign in</span>
